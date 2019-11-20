@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+
+    "name": "Exchange rates",
+    "description": "Exchange rates from PrivatBank and Monobank",
+    "version": "1.0",
+    "author": "",
+
+    "background": {
+        "scripts": ["popup.js"],
+        "persistent": true
+    },
+
+    "permissions": [
+        "tabs",
+        "http://*/",
+        "https://*/",
+        "storage"
+    ],
+    "browser_action": {
+        "default_icon": "logo.png",
+        "default_popup": "popup.html"
+    }
+}

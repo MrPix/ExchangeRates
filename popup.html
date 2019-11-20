@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Exchange rates</title>
+    <script src="popup.js"></script>
+    <style>
+        @font-face {
+                font-family: roboto;
+                src: url("./Roboto/Roboto-Medium.ttf") /* EOT file for IE */
+            }
+        table {
+            font-family: roboto,sans-serif;
+            text-align: right;
+            color: #4a4a4a;
+            border-spacing: 0px;
+        }
+        td img {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td>
+                <img src="privat.png"/>
+            </td>
+            <td style="padding-left: 8px;">
+                <div id='privatbank' style="font-weight: 500;">00.000</div>
+                <div id='privatbankchange' style="padding-left: 12px; font-size: 11px; text-align: right;">0.000</div>
+            </td>
+        </tr>
+        <tr style="height: 5px">
+        </tr>
+        <tr>
+            <td>
+                <img src="mono.png"/>
+            </td>
+            <td style="padding-left: 8px;">
+                <div id='monobank' style="font-weight: 500;">00.000</div>
+                <div id='monobankchange' style="padding-left: 12px; font-size: 11px; text-align: right;">0.000</div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
