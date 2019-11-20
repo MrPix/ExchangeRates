@@ -8,36 +8,39 @@ window.addEventListener('load', function (evt) {
 
 // Listen to messages from the payload.js script and write to popout.html
 chrome.runtime.onMessage.addListener(function (message) {
-    function drawChanges(elementId, currentRate) {
-        var currentLocalStorage = window.localStorage.getItem(elementId + "Current");
-        var previousLocalStorage = window.localStorage.getItem(elementId + "Previous");
-        if (currentLocalStorage === null && previousLocalStorage === null){
-            currentLocalStorage = previousLocalStorage = currentRate;
-            window.localStorage.setItem(elementId + "Current", currentRate);
-            window.localStorage.setItem(elementId + "Previous", currentRate);
+    function drawChanges(elementId, newRate) {
+        var storage = window.localStorage;
+        var element = document.getElementById(elementId);
+        var currentKey = elementId + "Current";
+        var previousKey = elementId + "Previous";
+        var currentRate = storage.getItem(currentKey);
+        var previousRate = storage.getItem(previousKey);
+        if (currentRate === null || previousRate === null){
+            currentRate = previousRate = newRate;
+            storage.setItem(currentKey, newRate);
+            storage.setItem(previousKey, newRate);
         }
-        var diff = (currentRate - currentLocalStorage);
+        var diff = (newRate - currentRate);
         if (diff > 0.0001 || diff < -0.0001) {
-            previousLocalStorage = currentLocalStorage;
-            currentLocalStorage = currentRate;
-            window.localStorage.setItem(elementId + "Current", currentLocalStorage);
-            window.localStorage.setItem(elementId + "Previous", previousLocalStorage);
+            previousRate = currentRate;
+            currentRate = newRate;
+            storage.setItem(currentKey, currentRate);
+            storage.setItem(previousKey, previousRate);
         }
-
-        var text = (currentRate - previousLocalStorage).toFixed(3);
-        document.getElementById(elementId).innerHTML = text;
-        if (currentLocalStorage < previousLocalStorage) {
-            document.getElementById(elementId).style.backgroundImage = "url('down.png')";
-        } else if (currentLocalStorage > previousLocalStorage) {
-            document.getElementById(elementId).style.backgroundImage = "url('up.png')";
-            document.getElementById(elementId).innerHTML = "+" + document.getElementById(elementId).innerHTML;
+        var text = (newRate - previousRate).toFixed(3);
+        element.innerHTML = text;
+        if (currentRate < previousRate) {
+            element.style.backgroundImage = "url('down.png')";
+        } else if (currentRate > previousRate) {
+            element.style.backgroundImage = "url('up.png')";
+            element.innerHTML = "+" + element.innerHTML;
         } else {
-            document.getElementById(elementId).style.background = "none"
-            document.getElementById(elementId).innerHTML = "0.000";
+            element.style.background = "none"
+            element.innerHTML = "0.000";
         }
-        document.getElementById(elementId).style.backgroundRepeat = "no-repeat";
-        document.getElementById(elementId).style.backgroundPositionX = "2px";
-        document.getElementById(elementId).style.backgroundPositionY = "4px";
+        element.style.backgroundRepeat = "no-repeat";
+        element.style.backgroundPositionX = "6px";
+        element.style.backgroundPositionY = "4px";
     }
 
     fetch('https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=11')
