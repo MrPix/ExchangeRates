@@ -76,4 +76,34 @@ chrome.runtime.onMessage.addListener(function (message) {
             document.getElementById('monobank').innerHTML = (+monousd).toFixed(3);
         }
     });
+
+    fetch('https://maanimo.com/currencies/highstock/interbank/usd/ask-bid', {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.series) {
+            var sellId = 0;
+            var lastRate = data.series[sellId].data[data.series[sellId].data.length - 1];
+            drawChanges("mezhbankchange", lastRate[1]);
+            document.getElementById('mezhbank').innerHTML = (+lastRate[1]).toFixed(3);
+        }
+    });
+
+    fetch('https://kurs.com.ua/ajax/getChart?size=big&type=interbank&currencies_from=usd&currencies_to=&organizations=&limit=&optimal=', {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.view) {
+            var chart = JSON.parse(data.view);
+            var kursRate = chart.series[0].data[chart.series[0].data.length -2][1];
+            drawChanges("kurscomuachange", kursRate);
+            document.getElementById('kurscomua').innerHTML = (+kursRate).toFixed(3);
+        }
+    });
 });
