@@ -11,11 +11,13 @@ window.addEventListener('load', function (evt) {
 
 var isPrivatEnabled = true;
 var isMonoEnabled = true;
+var isAlfaEnabled = true;
 var idKurscomuaEnabled = true;
 
 function init (message) {
     loadPrivat();
     loadMono();
+    loadAlfa();
     loadKurscomua();
 }
 
@@ -60,6 +62,43 @@ function loadMono () {
             drawChanges("monobankchange", monousd);
             document.getElementById('monobank').innerHTML = (+monousd).toFixed(3);
         }
+    });
+}
+
+function loadAlfa() {
+    if (!isAlfaEnabled) {
+        return;
+    }
+    fetch('https://alfabank.ua/')
+    .then(response => response.text())
+    .then(data => {
+        data = data.replace((/  |\r\n|\n|\r/gm),"");
+        var re = new RegExp('\<div class=\"currency-tab-block" data-tab="0"\>(.*?)\<div class=\"currency-tab-block\" data-tab=\"2\"\>');
+        var allCurrenciesBlock = data.match(re);
+        if (allCurrenciesBlock && allCurrenciesBlock && allCurrenciesBlock.length > 0) {
+            allCurrenciesBlock = allCurrenciesBlock[0];
+        } else {
+            return;
+        }
+        re.lastIndex = 0;
+        re = new RegExp('\<div class=\"title\"\>USD\<\/div\>(.*?)\<span class=\"small-title\"\>(.*?)\<div class=\"currency-block\"\>');
+        var usdBlock = allCurrenciesBlock.match(re);
+        if (usdBlock && usdBlock.length && usdBlock.length > 0) {
+            usdBlock = usdBlock[0];
+        } else {
+            return;
+        }
+        usdBlock = usdBlock.substring(usdBlock.indexOf("Продаж"));
+        re.lastIndex = 0;
+        re = new RegExp('\t{6}(.*?)\t{5}');
+        var usd = usdBlock.match(re);
+        if (usd && usd.length && usd.length > 1) {
+            usd = usd[1];
+        } else {
+            return;
+        }
+        drawChanges("alfabankchange", usd);
+        document.getElementById('alfabank').innerHTML = (+usd).toFixed(3);
     });
 }
 
