@@ -77,20 +77,18 @@ chrome.runtime.onMessage.addListener(function (message) {
         }
     });
 
-    fetch('https://maanimo.com/currencies/highstock/interbank/usd/ask-bid', {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+    function getLatestRate(data) {
+        console.log(data);
+        if (data.length > 0) {
+            var i = data.length - 1;
+            do {
+                if (data[i][1] !== null) {
+                    return data[i][1];
+                }
+            } while (--i >= 0)
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data && data.series) {
-            var sellId = 0;
-            var lastRate = data.series[sellId].data[data.series[sellId].data.length - 1];
-            drawChanges("mezhbankchange", lastRate[1]);
-            document.getElementById('mezhbank').innerHTML = (+lastRate[1]).toFixed(3);
-        }
-    });
+        return null;
+    }
 
     fetch('https://kurs.com.ua/ajax/getChart?size=big&type=interbank&currencies_from=usd&currencies_to=&organizations=&limit=&optimal=', {
         headers: {
@@ -101,7 +99,18 @@ chrome.runtime.onMessage.addListener(function (message) {
     .then(data => {
         if (data && data.view) {
             var chart = JSON.parse(data.view);
-            var kursRate = chart.series[0].data[chart.series[0].data.length -2][1];
+            console.log(chart);
+            var todayData = chart.series[0].data;
+            var yesterdayData = chart.series[2].data;
+            var kursRate = getLatestRate(todayData);
+            if (kursRate === null) {
+                kursRate = getLatestRate(yesterdayData);
+                document.getElementById('kurscomua').style.color = "grey";
+                document.getElementById('kurscomuachange').style.color = "grey";
+            }
+            if (kursRate === null) {
+                return;
+            }
             drawChanges("kurscomuachange", kursRate);
             document.getElementById('kurscomua').innerHTML = (+kursRate).toFixed(3);
         }
