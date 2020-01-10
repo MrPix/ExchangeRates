@@ -1,20 +1,15 @@
 {
-    "manifest_version": 2,
-
-    "name": "Exchange rates",
-    "description": "Exchange rates from PrivatBank and Monobank",
+    "manifest_version": 1,
+    "name": "Exchange rates Ukraine",
+    "description": "Exchange rates from the most popular banks of Ukraine",
     "version": "1.0",
-    "author": "",
-
+    "author": "Oleksiy Shapovalov",
     "background": {
         "scripts": ["popup.js"],
         "persistent": true
     },
-
     "permissions": [
         "tabs",
-        "http://*/",
-        "https://*/",
         "storage"
     ],
     "browser_action": {
