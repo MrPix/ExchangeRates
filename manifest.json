@@ -1,5 +1,5 @@
 {
-    "manifest_version": 1,
+    "manifest_version": 2,
     "name": "Exchange rates Ukraine",
     "description": "Exchange rates from the most popular banks of Ukraine",
     "version": "1.0",
