@@ -82,31 +82,10 @@ function loadAlfa() {
         url: 'https://alfabank.ua/',
         data: ''
     }, data => {
-        data = data.replace((/  |\r\n|\n|\r/gm), "");
-        var re = new RegExp('\<div class=\"currency-tab-block" data-tab="0"\>(.*?)\<div class=\"currency-tab-block\" data-tab=\"2\"\>');
-        var allCurrenciesBlock = data.match(re);
-        if (allCurrenciesBlock && allCurrenciesBlock && allCurrenciesBlock.length > 0) {
-            allCurrenciesBlock = allCurrenciesBlock[0];
-        } else {
-            return;
-        }
-        re.lastIndex = 0;
-        re = new RegExp('\<div class=\"title\"\>USD\<\/div\>(.*?)\<span class=\"small-title\"\>(.*?)\<div class=\"currency-block\"\>');
-        var usdBlock = allCurrenciesBlock.match(re);
-        if (usdBlock && usdBlock.length && usdBlock.length > 0) {
-            usdBlock = usdBlock[0];
-        } else {
-            return;
-        }
-        usdBlock = usdBlock.substring(usdBlock.indexOf("Продаж"));
-        re.lastIndex = 0;
-        re = new RegExp('\t{6}(.*?)\t{5}');
-        var usd = usdBlock.match(re);
-        if (usd && usd.length && usd.length > 1) {
-            usd = usd[1];
-        } else {
-            return;
-        }
+		data = data.substring(data.indexOf('<div class="currency-tab-block" data-tab="0">'));
+        var startIndex = data.indexOf("Продаж") + 97;
+		var usd = data.substring(startIndex, startIndex + 5);
+
         drawChanges("alfabankchange", usd);
         setElementText('alfabank', (+usd).toFixed(3));
     });
