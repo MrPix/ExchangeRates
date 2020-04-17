@@ -82,7 +82,8 @@ function loadAlfa() {
         url: 'https://alfabank.ua/',
         data: ''
     }, data => {
-        var startIndex = data.indexOf("USD_SALE") + 20;
+		data = data.substring(data.indexOf('<div class="currency-tab-block" data-tab="0">'));
+        var startIndex = data.indexOf("Продаж") + 97;
 		var usd = data.substring(startIndex, startIndex + 5);
 
         drawChanges("alfabankchange", usd);
