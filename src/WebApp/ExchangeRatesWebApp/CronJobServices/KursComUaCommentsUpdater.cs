@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ExchangeRatesWebApp.CronJobServices.KursComUa;
 using ExchangeRatesWebApp.Data;
 using ExchangeRatesWebApp.Models;
+using ExchangeRatesWebApp.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -19,10 +20,12 @@ namespace ExchangeRatesWebApp.CronJobServices
         private readonly string url = "https://kurs.com.ua/ajax/getForum?limit=15&type=mb_comments&current_page=interbank";
         private readonly ILogger<KursComUaCommentsUpdater> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        IUpdateService _updateService;
 
-        public KursComUaCommentsUpdater(IScheduleConfig<KursComUaCommentsUpdater> config, ILogger<KursComUaCommentsUpdater> logger, IServiceScopeFactory serviceScopeFactory)
+        public KursComUaCommentsUpdater(IScheduleConfig<KursComUaCommentsUpdater> config, ILogger<KursComUaCommentsUpdater> logger, IServiceScopeFactory serviceScopeFactory, IUpdateService updateService)
             : base(config.CronExpression, config.TimeZoneInfo)
         {
+            _updateService = updateService;
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
         }
@@ -35,12 +38,20 @@ namespace ExchangeRatesWebApp.CronJobServices
 
         public override Task DoWork(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{DateTime.Now:hh:mm:ss} KursComUaCommentsUpdater is working.");
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = client.GetAsync(url, cancellationToken).Result;
-            response.EnsureSuccessStatusCode();
-            string responseStream = response.Content.ReadAsStringAsync().Result;
-            ParseJson(responseStream);
+            try
+            {
+                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} KursComUaCommentsUpdater is working.");
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = client.GetAsync(url, cancellationToken).Result;
+                response.EnsureSuccessStatusCode();
+                string responseStream = response.Content.ReadAsStringAsync().Result;
+                ParseJson(responseStream);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{DateTime.Now:hh:mm:ss} KursComUaCommentsUpdater something was wrong");
+                _logger.LogError(ex.Message);
+            }
             return Task.CompletedTask;
         }
 
@@ -81,6 +92,7 @@ namespace ExchangeRatesWebApp.CronJobServices
                 _logger.LogInformation("KursComUaCommentsUpdater: Forum comments saved");
             }
             _logger.LogInformation($"KursComUaCommentsUpdater: {count} comments was added.");
+            _updateService.Update();
         }
     }
 
@@ -92,7 +104,7 @@ namespace ExchangeRatesWebApp.CronJobServices
             result = result.Replace('\n', ' ');
             result = result.Replace('\r', ' ');
             result = result.Replace('\t', ' ');
-            return result;
+            return result.Trim();
         }
     }
 }

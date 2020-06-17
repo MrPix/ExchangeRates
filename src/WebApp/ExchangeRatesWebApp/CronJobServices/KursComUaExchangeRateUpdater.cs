@@ -35,12 +35,20 @@ namespace ExchangeRatesWebApp.CronJobServices
 
         public override Task DoWork(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{DateTime.Now:hh:mm:ss} KursComUaExchangeRateUpdater is working.");
-            HttpClient client = new HttpClient();
-            var response = client.GetAsync(Url, cancellationToken).Result;
-            response.EnsureSuccessStatusCode();
-            var responseStream = response.Content.ReadAsStringAsync().Result;
-            ParseJson(responseStream);
+            try
+            {
+                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} KursComUaExchangeRateUpdater is working.");
+                HttpClient client = new HttpClient();
+                var response = client.GetAsync(Url, cancellationToken).Result;
+                response.EnsureSuccessStatusCode();
+                var responseStream = response.Content.ReadAsStringAsync().Result;
+                ParseJson(responseStream);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{DateTime.Now:hh:mm:ss} KursComUaExchangeRateUpdater something was wrong");
+                _logger.LogError(ex.Message);
+            }
             return Task.CompletedTask;
         }
 

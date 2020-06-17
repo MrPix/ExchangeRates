@@ -1,6 +1,7 @@
 using System;
 using ExchangeRatesWebApp.CronJobServices;
 using ExchangeRatesWebApp.Data;
+using ExchangeRatesWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,17 +27,24 @@ namespace ExchangeRatesWebApp
             services.AddDbContext<DataContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
+            services.AddSingleton<IBotService, BotService>();
+            services.AddHostedService<BotReplyService>();
+
+            services.AddTransient<IUpdateService, UpdateService>();
+
             services.AddCronJob<KursComUaExchangeRateUpdater>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"*/1 * * * *";
+                c.CronExpression = @"*/5 * * * *";
             });
 
             services.AddCronJob<KursComUaCommentsUpdater>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"*/1 * * * *";
+                c.CronExpression = @"*/5 * * * *";
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
