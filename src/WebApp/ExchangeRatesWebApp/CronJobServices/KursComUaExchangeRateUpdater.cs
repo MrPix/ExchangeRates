@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -90,12 +91,12 @@ namespace ExchangeRatesWebApp.CronJobServices
                 DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(stringDateSell));
                 DateTime dateTime = dateTimeOffset.LocalDateTime;
 
-                if (!double.TryParse(sell[1]?.ToString(), out double sellRate))
+                if (!double.TryParse(sell[1]?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double sellRate))
                 {
                     _logger.LogWarning("KursComUaExchangeRateUpdater: Cannot parse sell value");
                     continue;
                 }
-                if (!double.TryParse(buy[1]?.ToString(), out double buyRate))
+                if (!double.TryParse(buy[1]?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double buyRate))
                 {
                     _logger.LogWarning("KursComUaExchangeRateUpdater: Cannot parse buy value");
                     continue;
