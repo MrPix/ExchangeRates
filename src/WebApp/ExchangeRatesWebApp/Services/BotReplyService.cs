@@ -32,7 +32,6 @@ namespace ExchangeRatesWebApp.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -57,14 +56,10 @@ namespace ExchangeRatesWebApp.Services
 
             static async Task Usage(Message message)
             {
-                const string usage = "Usage:\n" +
-                                        "/inline   - send inline keyboard\n" +
-                                        "/keyboard - send custom keyboard\n" +
-                                        "/photo    - send a photo\n" +
-                                        "/request  - request location or contact";
+                const string success = "You successfully subscribed.";
                 await _client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: usage,
+                    text: success,
                     replyMarkup: new ReplyKeyboardRemove()
                 );
             }

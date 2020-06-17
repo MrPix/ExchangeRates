@@ -56,6 +56,7 @@ namespace ExchangeRatesWebApp.Services
                     chatId: chatId,
                     text: $"<b>{commment.Date:HH:mm}</b> {commment.Message}",
                     replyMarkup: new ReplyKeyboardRemove(),
+                    disableNotification: true,
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
                     ).Result;
         }

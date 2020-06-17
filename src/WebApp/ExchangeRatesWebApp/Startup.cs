@@ -25,7 +25,7 @@ namespace ExchangeRatesWebApp
         {
             services.AddControllers();
             services.AddDbContext<DataContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
             services.AddSingleton<IBotService, BotService>();
