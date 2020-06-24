@@ -57,6 +57,19 @@ namespace ExchangeRatesWebApp.CronJobServices
         {
             _timer?.Dispose();
         }
+
+        protected bool IsWorkingHours()
+        {
+            DateTime currentDateTime = DateTime.Now;
+            if (currentDateTime.Hour > 17
+                || currentDateTime.Hour < 9
+                || currentDateTime.DayOfWeek == DayOfWeek.Saturday
+                || currentDateTime.DayOfWeek == DayOfWeek.Sunday)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     public interface IScheduleConfig<T>

@@ -38,6 +38,10 @@ namespace ExchangeRatesWebApp.CronJobServices
         {
             try
             {
+                if (!IsWorkingHours())
+                {
+                    return Task.CompletedTask;
+                }
                 _logger.LogInformation($"{DateTime.Now:hh:mm:ss} KursComUaExchangeRateUpdater is working.");
                 HttpClient client = new HttpClient();
                 var response = client.GetAsync(Url, cancellationToken).Result;
