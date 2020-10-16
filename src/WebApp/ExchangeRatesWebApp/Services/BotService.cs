@@ -11,6 +11,7 @@ namespace ExchangeRatesWebApp.Services
         public BotService(IOptions<BotConfiguration> config)
         {
             _config = config.Value;
+            if (!config.Value.Enabled) return;
             // use proxy if configured in appsettings.*.json
             Client = new TelegramBotClient(_config.BotToken);
         }

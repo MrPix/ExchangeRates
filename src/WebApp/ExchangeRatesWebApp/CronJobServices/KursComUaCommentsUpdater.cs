@@ -96,7 +96,10 @@ namespace ExchangeRatesWebApp.CronJobServices
                 _logger.LogInformation("KursComUaCommentsUpdater: Forum comments saved");
             }
             _logger.LogInformation($"KursComUaCommentsUpdater: {count} comments was added.");
-            _updateService.Update();
+            if (_updateService != null)
+            {
+                _updateService.Update();
+            }
         }
     }
 

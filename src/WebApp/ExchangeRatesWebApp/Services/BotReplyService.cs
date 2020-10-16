@@ -21,6 +21,7 @@ namespace ExchangeRatesWebApp.Services
         private readonly ILogger<BotReplyService> _logger;
         public static TelegramBotClient _client;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        
 
         public BotReplyService(IOptions<BotConfiguration> config, IBotService botService, ILogger<BotReplyService> logger, IServiceScopeFactory serviceScopeFactory)
         {
@@ -36,6 +37,10 @@ namespace ExchangeRatesWebApp.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            if (!_config.Enabled)
+            {
+                return Task.CompletedTask;
+            }
             _client = new TelegramBotClient(_config.BotToken);
             var me = _client.GetMeAsync().Result;
             _logger.LogInformation($"BotService: started with bot {me.Username}");
